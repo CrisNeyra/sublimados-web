@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  NUEVO
+  EN_PROCESO
+  ENVIADO
+  COMPLETADO
+  CANCELADO
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  price       String
+  image       String
+  alt         String
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  clientName  String
+  whatsapp    String?
+  tshirtColor String?
+  design      String?
+  size        String?
+  notes       String?
+  status      OrderStatus @default(NUEVO)
+  createdAt   DateTime    @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  name      String
+  detail    String
+  quote     String
+  rating    Int      @default(5)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-labelledby="t1">
+  <title id="t1">Remera negra con estampado geométrico blanco</title>
+  <rect width="480" height="480" fill="#0b0b0b"/>
+  <g transform="translate(240 250) scale(2.6)" fill="none" stroke="#ffffff" stroke-width="1.4">
+    <path d="M-40,-28 L-26,-36 L-24,-66 L-10,-58 L0,-64 L10,-58 L24,-66 L26,-36 L40,-28 L44,2 L30,10 L28,26 L10,18 L0,40 L-10,18 L-28,26 L-30,10 L-44,2 Z" fill="#0b0b0b" stroke="#ffffff"/>
+    <circle cx="-12" cy="-12" r="4" fill="#ffffff" stroke="none"/>
+    <circle cx="12" cy="6" r="5" fill="#ffffff" stroke="none"/>
+    <circle cx="0" cy="-30" r="3" fill="#ffffff" stroke="none"/>
+  </g>
+</svg>

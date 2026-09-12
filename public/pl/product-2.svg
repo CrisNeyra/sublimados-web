@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="p2">
+  <title id="p2">Remera blanca oversize</title>
+  <rect width="400" height="400" fill="#f9fafb"/>
+  <g transform="translate(200 190) scale(2.2)" fill="#0b0b0b">
+    <path d="M-40,-28 L-26,-36 L-24,-66 L-38,-76 L-34,-92 L0,-92 L34,-92 L38,-76 L24,-66 L26,-36 L40,-28 L44,2 L30,10 L28,26 L10,18 L0,40 L-10,18 L-28,26 L-30,10 L-44,2 Z" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.4"/>
+    <text x="0" y="-14" font-family="Arial, sans-serif" font-size="10" font-weight="900" text-anchor="middle" fill="#0b0b0b" letter-spacing="0.5">ESTAMPA</text>
+    <text x="0" y="8" font-family="Arial, sans-serif" font-size="6" font-weight="400" text-anchor="middle" fill="#4b5563">personalizada</text>
+  </g>
+  <text x="200" y="352" font-family="Arial, sans-serif" font-size="18" font-weight="500" text-anchor="middle" fill="#4b5563">Remera Blanca Oversize</text>
+</svg>
