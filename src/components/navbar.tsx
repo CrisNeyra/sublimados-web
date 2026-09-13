@@ -94,7 +94,7 @@ export function Navbar() {
               <a
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="block rounded-lg px-3 py-3 text-base font-medium text-carbon transition-colors hover:bg-fog"
+                className="block rounded-lg px-3 py-3 text-base font-medium text-carbon transition-colors hover:bg-fog focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon"
               >
                 {link.label}
               </a>

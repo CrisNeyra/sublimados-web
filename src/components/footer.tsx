@@ -57,8 +57,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-mist">
-          © {new Date().getFullYear()} {SITE.name}. Todos los derechos
-          reservados.
+          © 2026 {SITE.name}. Todos los derechos reservados.
         </div>
       </div>
     </footer>

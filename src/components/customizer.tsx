@@ -91,6 +91,7 @@ export function Customizer() {
   const [selectedDesign, setSelectedDesign] = useState<(typeof DESIGNS)[number]>(DESIGNS[0]);
   const [selectedSize, setSelectedSize] = useState<string>("L");
   const [customNote, setCustomNote] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   const resetAll = () => {
     setSelectedColor(TSHIRT_COLORS[0]);
@@ -107,6 +108,31 @@ export function Customizer() {
 - Talle: ${selectedSize}
 
 ¿Podrían indicarme precio y tiempos de entrega?`;
+
+  const sendQuote = async () => {
+    setIsSending(true);
+    try {
+      await fetch("/api/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientName: "Cliente Personalizador",
+          size: selectedSize,
+          tshirtColor: selectedColor.name,
+          design:
+            isCustomDesign && customNote
+              ? `${selectedDesign.name}: ${customNote}`
+              : selectedDesign.name,
+          notes: message,
+        }),
+      });
+    } catch {
+      // El pedido en DB es un respaldo; WhatsApp sigue siendo el canal principal.
+    } finally {
+      setIsSending(false);
+      window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+    }
+  };
 
   return (
     <section id="personalizador" className="scroll-mt-20 border-y border-silver/60 bg-white py-20 sm:py-28">
@@ -305,15 +331,15 @@ export function Customizer() {
                   {selectedColor.name} · {selectedDesign.name} · {selectedSize}
                 </span>
               </div>
-              <a
-                href={whatsappLink(message)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              <button
+                type="button"
+                onClick={sendQuote}
+                disabled={isSending}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
               >
                 <MessageSquareShare className="h-4 w-4" />
-                Cotizar este Mockup por WhatsApp
-              </a>
+                {isSending ? "Guardando pedido..." : "Cotizar este Mockup por WhatsApp"}
+              </button>
             </div>
           </div>
         </div>

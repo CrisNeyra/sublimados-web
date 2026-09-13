@@ -1,0 +1,14 @@
+Fotos del catálogo
+==================
+
+Copiá acá las fotos reales de tus remeras, con estos nombres:
+
+  product-1.jpg  (o .webp / .png)
+  product-2.jpg
+  product-3.jpg
+  product-4.jpg
+
+Después actualizá las rutas en Neon (tabla Product, campo image), por ejemplo:
+  /catalog/product-1.jpg
+
+Hasta que las pongas, se usan los SVG de ejemplo (product-1.svg, etc.).

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="p4">
+  <title id="p4">Remera negra edición especial</title>
+  <rect width="400" height="400" fill="#f9fafb"/>
+  <g transform="translate(200 190) scale(2.2)" fill="#0b0b0b">
+    <path d="M-40,-28 L-26,-36 L-24,-66 L-38,-76 L-34,-92 L0,-92 L34,-92 L38,-76 L24,-66 L26,-36 L40,-28 L44,2 L30,10 L28,26 L10,18 L0,40 L-10,18 L-28,26 L-30,10 L-44,2 Z" fill="#121212" stroke="#e5e7eb" stroke-width="1.4"/>
+    <path d="M0,-46 L6,-30 L0,-34 L-6,-30 Z" fill="#ffffff"/>
+    <circle cx="-14" cy="-14" r="5" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+    <circle cx="14" cy="0" r="3" fill="#ffffff"/>
+  </g>
+  <text x="200" y="352" font-family="Arial, sans-serif" font-size="18" font-weight="500" text-anchor="middle" fill="#4b5563">Edición Especial</text>
+</svg>

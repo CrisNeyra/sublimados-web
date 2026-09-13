@@ -47,36 +47,13 @@ const WORKS = [
   },
 ] as const;
 
-const TESTIMONIALS = [
-  {
-    name: "Lucía Fernández",
-    detail: "Pedido 10 remeras · Geométrico",
-    quote:
-      "La calidad es impresionante. Los colores quedaron tal cual la muestra y nos llegó todo en el tiempo pactado. ¡Súper recomendados!",
-    rating: 5,
-  },
-  {
-    name: "Diego Ramírez",
-    detail: "Pedido personalizado · Mascota",
-    quote:
-      "Subí una foto de mi perro y la estamparon increíble. La remera se ve hermosa y el trato por WhatsApp fue súper rápido.",
-    rating: 5,
-  },
-  {
-    name: "Carla Mendoza",
-    detail: "Pack corporativo · Logo",
-    quote:
-      "Hicieron las uniformes para la empresa con nuestro logo y quedaron impecables. Repetimos seguro para eventos internos.",
-    rating: 5,
-  },
-  {
-    name: "Julián Torres",
-    detail: "Edición especial · Evento",
-    quote:
-      "Diseñamos la remera para una fiesta temática y fue un éxito. La sublimación tiene terminación premium, se nota el cuidado.",
-    rating: 5,
-  },
-] as const;
+export type CatalogReview = {
+  id: string;
+  name: string;
+  detail: string;
+  quote: string;
+  rating: number;
+};
 
 function Stars({ count }: { count: number }) {
   return (
@@ -101,12 +78,9 @@ function Stars({ count }: { count: number }) {
   );
 }
 
-export function Works() {
+export function Works({ reviews }: { reviews: CatalogReview[] }) {
   return (
-    <section
-      id="trabajos"
-      className="scroll-mt-20 bg-fog py-20 sm:py-28"
-    >
+    <section id="trabajos" className="scroll-mt-20 bg-fog py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-smoke">
@@ -130,7 +104,7 @@ export function Works() {
                     src={work.src}
                     alt={work.alt}
                     width={600}
-                    height={600}
+                    height={400}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -155,9 +129,9 @@ export function Works() {
           </h3>
 
           <ul className="mt-10 grid gap-6 md:grid-cols-2">
-            {TESTIMONIALS.map((testimonial) => (
+            {reviews.map((review) => (
               <li
-                key={testimonial.name}
+                key={review.id}
                 className="flex flex-col gap-4 rounded-2xl border border-silver bg-white p-6"
               >
                 <div className="flex items-center justify-between gap-3">
@@ -166,7 +140,7 @@ export function Works() {
                       aria-hidden="true"
                       className="flex h-11 w-11 items-center justify-center rounded-full bg-carbon text-sm font-bold text-white"
                     >
-                      {testimonial.name
+                      {review.name
                         .split(" ")
                         .map((word) => word[0])
                         .join("")
@@ -174,18 +148,24 @@ export function Works() {
                         .toUpperCase()}
                     </span>
                     <div>
-                      <p className="font-bold text-carbon">{testimonial.name}</p>
-                      <p className="text-xs text-smoke">{testimonial.detail}</p>
+                      <p className="font-bold text-carbon">{review.name}</p>
+                      <p className="text-xs text-smoke">{review.detail}</p>
                     </div>
                   </div>
-                  <Stars count={testimonial.rating} />
+                  <Stars count={review.rating} />
                 </div>
                 <blockquote className="text-sm leading-7 text-smoke">
-                  “{testimonial.quote}”
+                  “{review.quote}”
                 </blockquote>
               </li>
             ))}
           </ul>
+
+          {reviews.length === 0 && (
+            <p className="mt-8 text-center text-sm text-smoke">
+              Todavía no hay opiniones publicadas.
+            </p>
+          )}
         </div>
       </div>
     </section>

@@ -4,18 +4,19 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  PRODUCT_CATEGORIES,
-  PRODUCTS,
-  SIZES,
-} from "./products-data";
+import { PRODUCT_CATEGORIES, SIZES } from "./products-data";
 import { whatsappLink } from "@/lib/site";
 
-function ProductCard({
-  product,
-}: {
-  product: (typeof PRODUCTS)[number];
-}) {
+export type CatalogProduct = {
+  id: string;
+  name: string;
+  category: string;
+  price: string;
+  image: string;
+  alt: string;
+};
+
+function ProductCard({ product }: { product: CatalogProduct }) {
   const [size, setSize] = useState<string>("L");
 
   const message = `¡Hola! Quiero cotizar la remera "${product.name}" (${product.price}), talle ${size}. ¿Tienen este diseño disponible?`;
@@ -47,10 +48,7 @@ function ProductCard({
           </legend>
           <div className="flex flex-wrap gap-2" role="group">
             {SIZES.map((option) => (
-              <label
-                key={option}
-                className="cursor-pointer"
-              >
+              <label key={option} className="cursor-pointer">
                 <input
                   type="radio"
                   name={`size-${product.id}`}
@@ -81,19 +79,16 @@ function ProductCard({
   );
 }
 
-export function Products() {
+export function Products({ products }: { products: CatalogProduct[] }) {
   const [category, setCategory] = useState<string>("Todas");
 
   const visibleProducts =
     category === "Todas"
-      ? PRODUCTS
-      : PRODUCTS.filter((product) => product.category === category);
+      ? products
+      : products.filter((product) => product.category === category);
 
   return (
-    <section
-      id="productos"
-      className="scroll-mt-20 bg-white py-20 sm:py-28"
-    >
+    <section id="productos" className="scroll-mt-20 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-smoke">
@@ -103,8 +98,8 @@ export function Products() {
             Nuestras remeras
           </h2>
           <p className="mt-4 text-base leading-7 text-smoke">
-            Diseños infinitos que se subliman en cada prenda. Elegí un modelo
-            y contanos tu idea, nosotros la estampamos.
+            Diseños infinitos que se subliman en cada prenda. Elegí un modelo y
+            contanos tu idea, nosotros la estampamos.
           </p>
         </div>
 
@@ -138,6 +133,12 @@ export function Products() {
             </li>
           ))}
         </ul>
+
+        {visibleProducts.length === 0 && (
+          <p className="mt-8 text-center text-sm text-smoke">
+            No hay productos en esta categoría todavía.
+          </p>
+        )}
 
         <div className="mt-10 rounded-2xl border border-silver bg-fog p-6 text-center sm:p-8">
           <p className="text-sm leading-6 text-smoke">
