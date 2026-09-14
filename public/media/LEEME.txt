@@ -1,0 +1,21 @@
+Video de fondo del inicio (#inicio)
+
+1. Copiá tu archivo original acá con este nombre:
+   sublimados-web/public/media/hero-source.mp4
+   (también sirve .mov o .webm con el mismo nombre base)
+
+2. Comprimí a un archivo liviano para la web (H.264, ~720p, sin audio, faststart).
+   Instalá ffmpeg si no está (https://ffmpeg.org) y, en una terminal, desde
+   sublimados-web/public/media, ejecutá:
+
+   ffmpeg -y -i hero-source.mp4 -an -vf "scale=-2:720" -c:v libx264 -preset medium -crf 28 -movflags +faststart hero.mp4
+
+   Opcional (VP9):
+
+   ffmpeg -y -i hero-source.mp4 -an -vf "scale=-2:720" -c:v libvpx-vp9 -b:v 0 -crf 32 hero.webm
+
+3. Verificación: deben existir hero.mp4 (y opcionalmente hero.webm). El sitio
+   los carga desde /media/hero.mp4. El original hero-source no hace falta
+   subirlo a producción si ya tenés el comprimido.
+
+El video de la web debe pesar mucho menos que el original (resolución, bitrate y mute).

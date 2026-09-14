@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS, SITE } from "@/lib/site";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -38,12 +39,10 @@ export function Navbar() {
       >
         <a
           href="#inicio"
-          className="flex items-center gap-2 font-black uppercase tracking-tight text-carbon"
+          className="flex items-center gap-2 font-black tracking-tight text-carbon"
           onClick={() => setOpen(false)}
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded bg-carbon text-sm font-bold text-white">
-            S
-          </span>
+          <BrandLogo size={44} />
           <span className="hidden sm:inline">{SITE.name}</span>
         </a>
 
@@ -52,7 +51,7 @@ export function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-smoke transition-colors hover:bg-fog hover:text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon"
+                className="rounded-full px-4 py-2 text-base font-medium text-smoke transition-colors hover:bg-fog hover:text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon"
               >
                 {link.label}
               </a>
@@ -62,7 +61,7 @@ export function Navbar() {
 
         <a
           href="#contacto"
-          className="hidden rounded-full bg-carbon px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon md:inline-flex"
+          className="hidden rounded-full bg-carbon px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon md:inline-flex"
         >
           Cotizar ahora
         </a>
@@ -104,7 +103,7 @@ export function Navbar() {
             <a
               href="#contacto"
               onClick={() => setOpen(false)}
-              className="block rounded-full bg-carbon px-5 py-3 text-center text-sm font-semibold text-white"
+              className="block rounded-full bg-carbon px-5 py-3 text-center text-base font-semibold text-white"
             >
               Cotizar ahora
             </a>

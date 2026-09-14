@@ -10,8 +10,9 @@ const SLIDES = [
   {
     id: "slide-1",
     badge: "Sublimación textil",
-    title: "Estampados de infinitos diseños.",
-    highlight: "Tu estilo, sublimado.",
+    title: "Somos calidad y vanguardia en sublimaciones",
+    highlight: "",
+    compact: true,
     description:
       "Remeras con estampados reales, colores vivos y terminación de calidad profesional.",
     image: "/pl/hero-1.svg",
@@ -20,8 +21,9 @@ const SLIDES = [
   {
     id: "slide-2",
     badge: "Personalización total",
-    title: "Diseñá lo que imagines.",
-    highlight: "Sin límites creativos.",
+    title: "Diseñamos lo infinito",
+    highlight: "",
+    compact: false,
     description:
       "Subí tu idea o elegí uno de nuestros diseños. Nosotros la llevamos a tu remera.",
     image: "/pl/hero-2.svg",
@@ -32,6 +34,7 @@ const SLIDES = [
     badge: "Pedidos por WhatsApp",
     title: "Tu pedido, a un mensaje.",
     highlight: "Atención rápida y directa.",
+    compact: false,
     description:
       "Cotizá al instante, elegí talles y colores, y recibí tu remera lista para estrenar.",
     image: "/pl/hero-3.svg",
@@ -62,6 +65,7 @@ export function HeroCarousel() {
   const [paused, setPaused] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
   const pauseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const goTo = useCallback((index: number) => {
     setActive((index + SLIDES.length) % SLIDES.length);
@@ -75,6 +79,18 @@ export function HeroCarousel() {
     );
     return () => clearInterval(timer);
   }, [paused, reducedMotion]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (reducedMotion) {
+      video.pause();
+      return;
+    }
+    void video.play().catch(() => {
+      // Autoplay bloqueado: el overlay y el poster cubren el fondo.
+    });
+  }, [reducedMotion]);
 
   const togglePause = () => {
     if (pauseTimeout.current) {
@@ -101,9 +117,32 @@ export function HeroCarousel() {
         pauseTimeout.current = setTimeout(() => setPaused(false), 500);
       }}
     >
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-graphite/40 blur-3xl" />
-        <div className="absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-smoke/30 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden>
+        {!reducedMotion ? (
+          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full scale-110 object-cover"
+            style={{ filter: "blur(8px)" }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/pl/hero-1.svg"
+          >
+            <source src="/media/hero.webm" type="video/webm" />
+            <source src="/media/hero.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <Image
+            src="/pl/hero-1.svg"
+            alt=""
+            fill
+            className="object-cover opacity-50"
+            sizes="100vw"
+            priority
+          />
+        )}
+        <div className="absolute inset-0 bg-carbon/70" />
       </div>
 
       {SLIDES.map((item, index) => (
@@ -120,8 +159,18 @@ export function HeroCarousel() {
               <p className="mb-5 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-fog">
                 {item.badge}
               </p>
-              <h1 className="text-4xl font-black uppercase leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                {item.title} <span className="text-mist">{item.highlight}</span>
+              <h1
+                className={cn(
+                  "font-black uppercase leading-[1.08] tracking-tight text-white",
+                  item.compact
+                    ? "text-3xl sm:text-4xl lg:text-5xl"
+                    : "text-4xl sm:text-5xl lg:text-6xl"
+                )}
+              >
+                {item.title}
+                {item.highlight ? (
+                  <span className="text-mist"> {item.highlight}</span>
+                ) : null}
               </h1>
               <p className="mx-auto mt-6 max-w-md text-base leading-7 text-silver lg:mx-0">
                 {item.description}

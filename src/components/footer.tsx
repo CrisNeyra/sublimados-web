@@ -1,5 +1,6 @@
 import { MessageCircle } from "lucide-react";
 import { NAV_LINKS, SITE, whatsappLink } from "@/lib/site";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function Footer() {
   return (
@@ -7,10 +8,8 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <a href="#inicio" className="flex items-center gap-2 font-black uppercase tracking-tight">
-              <span className="flex h-8 w-8 items-center justify-center rounded bg-white text-sm font-bold text-carbon">
-                S
-              </span>
+            <a href="#inicio" className="flex items-center gap-2 font-black tracking-tight">
+              <BrandLogo size={44} />
               {SITE.name}
             </a>
             <p className="mt-4 max-w-xs text-sm leading-6 text-fog">

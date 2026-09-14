@@ -11,14 +11,15 @@ function resolveSiteUrl() {
 }
 
 export const SITE = {
-  name: "Sublimados",
-  tagline: "Estampados de infinitos diseños",
+  name: "¡¡The Shirt!!",
+  tagline: "Calidad y vanguardia en sublimaciones",
   description:
-    "Remeras sublimadas con estampados de infinitos diseños. Personalización real, calidad de impresión y atención directa por WhatsApp.",
+    "¡¡The Shirt!!: sublimaciones con calidad y vanguardia. Personalización real y atención directa por WhatsApp.",
   whatsappNumber,
   whatsappMessage:
-    "¡Hola! Quiero hacer un pedido de remeras sublimadas. ¿Me pasan más información?",
+    "¡Hola! Quiero hacer un pedido en ¡¡The Shirt!!. ¿Me pasan más información?",
   url: resolveSiteUrl(),
+  logoSrc: "/brand/logo.png",
 };
 
 export const NAV_LINKS = [

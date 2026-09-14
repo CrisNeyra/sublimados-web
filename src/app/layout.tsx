@@ -13,8 +13,8 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: "Sublimados & Estampados | Remeras Personalizadas",
-    template: "%s | Sublimados",
+    default: "¡¡The Shirt!! | Remeras Personalizadas",
+    template: "%s | ¡¡The Shirt!!",
   },
   description: SITE.description,
   openGraph: {
@@ -22,12 +22,12 @@ export const metadata: Metadata = {
     locale: "es_AR",
     url: SITE.url,
     siteName: SITE.name,
-    title: "Sublimados & Estampados | Remeras Personalizadas",
+    title: "¡¡The Shirt!! | Remeras Personalizadas",
     description: SITE.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sublimados & Estampados | Remeras Personalizadas",
+    title: "¡¡The Shirt!! | Remeras Personalizadas",
     description: SITE.description,
   },
 };

@@ -1,0 +1,5 @@
+Copiá acá el logo de ¡¡The Shirt!! con este nombre exacto:
+
+  logo.png
+
+PNG o WebP, fondo transparente si podés. La web lo usa en la navbar y el footer.
