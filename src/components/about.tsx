@@ -48,7 +48,7 @@ export function About() {
             </p>
 
             <a
-              href="#trabajos"
+              href="/#trabajos"
               className="mt-8 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-carbon transition-colors hover:bg-fog focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Ver nuestros trabajos

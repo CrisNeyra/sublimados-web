@@ -4,6 +4,7 @@ import { Customizer } from "@/components/customizer";
 import { Products } from "@/components/products";
 import { About } from "@/components/about";
 import { Works } from "@/components/works";
+import { Faq, FAQ_ITEMS } from "@/components/faq";
 import { Contact } from "@/components/contact";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { Footer } from "@/components/footer";
@@ -51,6 +52,23 @@ export default async function Home() {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQ_ITEMS.map((item) => ({
+              "@type": "Question",
+              name: item.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: item.answer,
+              },
+            })),
+          }),
+        }}
+      />
       <Navbar />
       <main id="contenido">
         <HeroCarousel />
@@ -58,6 +76,7 @@ export default async function Home() {
         <Products products={products} />
         <About />
         <Works reviews={reviews} />
+        <Faq />
         <Contact />
       </main>
       <WhatsAppButton />

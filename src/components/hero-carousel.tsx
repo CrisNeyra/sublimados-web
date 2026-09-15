@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { whatsappLink } from "@/lib/site";
 
 const SLIDES = [
   {
@@ -177,15 +176,13 @@ export function HeroCarousel() {
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 <a
-                  href={whatsappLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/#personalizador"
                   className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-carbon transition-colors hover:bg-fog focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
-                  Empezar a sublimar
+                  Armá tu remera
                 </a>
                 <a
-                  href="#productos"
+                  href="/#productos"
                   className="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   Ver productos

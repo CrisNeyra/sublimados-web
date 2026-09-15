@@ -190,6 +190,14 @@ export function Contact() {
             </button>
             <p className="mt-3 text-center text-xs leading-5 text-smoke">
               Al enviar, se abrirá WhatsApp con tu consulta armada y se registrará tu pedido.
+              Tratamos esos datos según el{" "}
+              <a
+                href="/privacidad"
+                className="font-semibold text-carbon underline underline-offset-2 hover:no-underline"
+              >
+                aviso de privacidad
+              </a>
+              .
             </p>
           </form>
         </div>

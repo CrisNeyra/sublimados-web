@@ -23,11 +23,12 @@ export const SITE = {
 };
 
 export const NAV_LINKS = [
-  { href: "#inicio", label: "Inicio" },
-  { href: "#productos", label: "Productos" },
-  { href: "#quienes-somos", label: "Quiénes Somos" },
-  { href: "#trabajos", label: "Trabajos" },
-  { href: "#contacto", label: "Contacto" },
+  { href: "/#inicio", label: "Inicio" },
+  { href: "/#personalizador", label: "Personalizador" },
+  { href: "/#productos", label: "Productos" },
+  { href: "/#quienes-somos", label: "Quiénes Somos" },
+  { href: "/#trabajos", label: "Trabajos" },
+  { href: "/#contacto", label: "Contacto" },
 ] as const;
 
 export function whatsappLink(message: string = SITE.whatsappMessage) {

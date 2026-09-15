@@ -8,7 +8,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <a href="#inicio" className="flex items-center gap-2 font-black tracking-tight">
+            <a href="/#inicio" className="flex items-center gap-2 font-black tracking-tight">
               <BrandLogo size={44} />
               {SITE.name}
             </a>
@@ -55,8 +55,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-mist">
-          © 2026 {SITE.name}. Todos los derechos reservados.
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-center text-xs text-mist sm:flex-row sm:text-left">
+          <p>© 2026 {SITE.name}. Todos los derechos reservados.</p>
+          <a
+            href="/privacidad"
+            className="text-fog underline-offset-2 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Privacidad
+          </a>
         </div>
       </div>
     </footer>
