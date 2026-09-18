@@ -14,8 +14,7 @@ Video de fondo del inicio (#inicio)
 
    ffmpeg -y -i hero-source.mp4 -an -vf "scale=-2:720" -c:v libvpx-vp9 -b:v 0 -crf 32 hero.webm
 
-3. Verificación: deben existir hero.mp4 (y opcionalmente hero.webm). El sitio
-   los carga desde /media/hero.mp4. El original hero-source no hace falta
-   subirlo a producción si ya tenés el comprimido.
+3. Verificación: deben existir hero.mp4. El sitio lo carga desde /media/hero.mp4.
 
-El video de la web debe pesar mucho menos que el original (resolución, bitrate y mute).
+El archivo actual (~4 MB, H.264, sin audio) ya es razonable para la web.
+El original hero-source no hace falta subirlo a producción.

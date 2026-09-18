@@ -126,9 +126,9 @@ export function HeroCarousel() {
             muted
             loop
             playsInline
+            preload="metadata"
             poster="/pl/hero-1.svg"
           >
-            <source src="/media/hero.webm" type="video/webm" />
             <source src="/media/hero.mp4" type="video/mp4" />
           </video>
         ) : (

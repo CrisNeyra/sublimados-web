@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/site";
+import { Analytics } from "@/components/analytics";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -10,6 +11,8 @@ const roboto = Roboto({
   display: "swap",
 });
 
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
@@ -17,6 +20,7 @@ export const metadata: Metadata = {
     template: "%s | ¡¡The Shirt!!",
   },
   description: SITE.description,
+  applicationName: SITE.name,
   openGraph: {
     type: "website",
     locale: "es_AR",
@@ -30,6 +34,9 @@ export const metadata: Metadata = {
     title: "¡¡The Shirt!! | Remeras Personalizadas",
     description: SITE.description,
   },
+  ...(googleVerification
+    ? { verification: { google: googleVerification } }
+    : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -43,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Saltar al contenido
         </a>
         {children}
+        <Analytics />
       </body>
     </html>
   );

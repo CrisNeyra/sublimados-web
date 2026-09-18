@@ -2,11 +2,36 @@ const whatsappNumber =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ||
   "5491100000000";
 
+function withProtocol(value: string) {
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://${value}`;
+}
+
 function resolveSiteUrl() {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (explicit) return explicit;
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
+  if (explicit) {
+    try {
+      return new URL(withProtocol(explicit)).origin;
+    } catch {
+      // Valor inválido en Vercel: no romper el build.
+    }
+  }
   const vercelProduction = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercelProduction) return `https://${vercelProduction}`;
+  if (vercelProduction) {
+    try {
+      return new URL(withProtocol(vercelProduction)).origin;
+    } catch {
+      // seguir al fallback
+    }
+  }
+  const vercelUrl = process.env.VERCEL_URL;
+  if (vercelUrl) {
+    try {
+      return new URL(withProtocol(vercelUrl)).origin;
+    } catch {
+      // seguir al fallback
+    }
+  }
   return "http://localhost:3000";
 }
 

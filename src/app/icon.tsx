@@ -1,0 +1,31 @@
+import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+export const size = { width: 32, height: 32 };
+export const contentType = "image/png";
+
+export default async function Icon() {
+  const bytes = await readFile(join(process.cwd(), "public/brand/logo.png"));
+  const logo = `data:image/png;base64,${bytes.toString("base64")}`;
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          borderRadius: 6,
+          background: "#0b0b0b",
+        }}
+      >
+        <img src={logo} width={32} height={32} alt="" style={{ objectFit: "cover" }} />
+      </div>
+    ),
+    { ...size }
+  );
+}
