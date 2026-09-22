@@ -43,8 +43,8 @@ export default async function Home() {
         },
       }),
     ]);
-  } catch {
-    // Sin Neon en el build o caída de red: la home igual se publica.
+  } catch (error) {
+    console.error("No se pudieron cargar productos/reseñas desde Neon:", error);
   }
 
   return (

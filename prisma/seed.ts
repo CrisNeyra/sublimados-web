@@ -8,8 +8,11 @@ import { PrismaPg } from "@prisma/adapter-pg";
  * No es parte de la web en sí: es una herramienta de desarrollo.
  */
 
-const connectionString =
-  process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
+const connectionString = (
+  process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL ?? ""
+)
+  .replace(/([?&])channel_binding=require&?/g, "$1")
+  .replace(/[?&]$/, "");
 
 if (!connectionString) {
   throw new Error(
