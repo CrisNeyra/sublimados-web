@@ -1,14 +1,13 @@
 Fotos del catálogo
 ==================
 
-Copiá acá las fotos reales de tus remeras, con estos nombres:
+Las fotos actuales:
 
-  product-1.jpg  (o .webp / .png)
-  product-2.jpg
-  product-3.jpg
-  product-4.jpg
+  remera_TS.jpg
+  remera_auradev.jpg
+  remera_aurapro.jpg
+  remera_laxmar.jpg
 
-Después actualizá las rutas en Neon (tabla Product, campo image), por ejemplo:
-  /catalog/product-1.jpg
+Están enlazadas en Neon (campo image) y en el inicio / trabajos.
 
-Hasta que las pongas, se usan los SVG de ejemplo (product-1.svg, etc.).
+Si agregás más fotos, copialas acá y actualizá prisma/seed.ts (después: npm run db:seed).

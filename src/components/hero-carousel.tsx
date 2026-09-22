@@ -14,8 +14,8 @@ const SLIDES = [
     compact: true,
     description:
       "Remeras con estampados reales, colores vivos y terminación de calidad profesional.",
-    image: "/pl/hero-1.svg",
-    alt: "Remera negra con estampado geométrico blanco",
+    image: "/catalog/remera_TS.jpg",
+    alt: "Remera sublimada The Shirt",
   },
   {
     id: "slide-2",
@@ -25,8 +25,8 @@ const SLIDES = [
     compact: false,
     description:
       "Subí tu idea o elegí uno de nuestros diseños. Nosotros la llevamos a tu remera.",
-    image: "/pl/hero-2.svg",
-    alt: "Remera blanca con estampado tipográfico minimalista",
+    image: "/catalog/remera_aurapro.jpg",
+    alt: "Remera sublimada Aura Pro",
   },
   {
     id: "slide-3",
@@ -36,8 +36,8 @@ const SLIDES = [
     compact: false,
     description:
       "Cotizá al instante, elegí talles y colores, y recibí tu remera lista para estrenar.",
-    image: "/pl/hero-3.svg",
-    alt: "Remera gris con diseño personalizado",
+    image: "/catalog/remera_laxmar.jpg",
+    alt: "Remera sublimada Laxmar",
   },
 ] as const;
 
@@ -127,13 +127,13 @@ export function HeroCarousel() {
             loop
             playsInline
             preload="metadata"
-            poster="/pl/hero-1.svg"
+            poster="/catalog/remera_TS.jpg"
           >
             <source src="/media/hero.mp4" type="video/mp4" />
           </video>
         ) : (
           <Image
-            src="/pl/hero-1.svg"
+            src="/catalog/remera_TS.jpg"
             alt=""
             fill
             className="object-cover opacity-50"
@@ -202,7 +202,7 @@ export function HeroCarousel() {
                   width={480}
                   height={480}
                   priority={index === 0}
-                  className="h-auto w-full"
+                  className="aspect-square h-auto w-full object-cover"
                 />
               </div>
               <span className="absolute right-4 top-4 rounded-full bg-carbon/80 px-3 py-1 text-xs font-medium text-fog backdrop-blur">

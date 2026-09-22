@@ -25,32 +25,32 @@ const prisma = new PrismaClient({ adapter });
 
 const products = [
   {
-    name: "Remera Negra Clásica",
-    category: "Geométricos",
+    name: "Remera The Shirt",
+    category: "Corporativos",
     price: "$12.000",
-    image: "/catalog/product-1.svg",
-    alt: "Remera negra clásica",
+    image: "/catalog/remera_TS.jpg",
+    alt: "Remera sublimada The Shirt",
   },
   {
-    name: "Remera Blanca Oversize",
-    category: "Tipográficos",
+    name: "Remera Aura Dev",
+    category: "Corporativos",
     price: "$12.500",
-    image: "/catalog/product-2.svg",
-    alt: "Remera blanca oversize",
+    image: "/catalog/remera_auradev.jpg",
+    alt: "Remera sublimada Aura Dev",
   },
   {
-    name: "Remera Gris Heather",
-    category: "Personajes",
+    name: "Remera Aura Pro",
+    category: "Corporativos",
     price: "$13.000",
-    image: "/catalog/product-3.svg",
-    alt: "Remera gris heather",
+    image: "/catalog/remera_aurapro.jpg",
+    alt: "Remera sublimada Aura Pro",
   },
   {
-    name: "Edición Especial",
+    name: "Remera Laxmar",
     category: "Eventos",
     price: "$14.500",
-    image: "/catalog/product-4.svg",
-    alt: "Remera negra edición especial",
+    image: "/catalog/remera_laxmar.jpg",
+    alt: "Remera sublimada Laxmar",
   },
 ];
 
