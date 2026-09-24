@@ -46,7 +46,8 @@ export default function AdminLoginForm() {
           Pedidos
         </h1>
         <p className="mt-3 text-sm leading-6 text-smoke">
-          Ingresá la contraseña de ADMIN_PASSWORD (archivo .env).
+          Ingresá la contraseña del panel (la misma que configuraste como
+          ADMIN_PASSWORD en Vercel).
         </p>
 
         <label className="mt-6 block text-xs font-bold uppercase tracking-wider text-smoke">

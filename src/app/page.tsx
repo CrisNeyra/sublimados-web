@@ -10,7 +10,7 @@ import { Faq, FAQ_ITEMS } from "@/components/faq";
 import { Contact } from "@/components/contact";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { Footer } from "@/components/footer";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import {
   catalogProductsFallback,
   catalogReviewsFallback,
@@ -23,7 +23,11 @@ export default async function Home() {
   let products: CatalogProduct[] = [];
   let reviews: CatalogReview[] = [];
 
+  const prisma = getPrisma();
   try {
+    if (!prisma) {
+      throw new Error("Falta DATABASE_URL");
+    }
     [products, reviews] = await Promise.all([
       prisma.product.findMany({
         orderBy: { createdAt: "asc" },

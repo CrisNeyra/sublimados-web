@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
 
 const STATUSES = new Set<string>(Object.values(OrderStatus));
@@ -9,6 +9,14 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const prisma = getPrisma();
+    if (!prisma) {
+      return NextResponse.json(
+        { error: "Falta DATABASE_URL en el servidor" },
+        { status: 503 }
+      );
+    }
+
     const { id } = await context.params;
     const body = await request.json();
     const status = body.status;

@@ -240,7 +240,7 @@ export function Customizer() {
   const sendQuote = async () => {
     setIsSending(true);
     try {
-      await fetch("/api/pedidos", {
+      const response = await fetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -261,6 +261,9 @@ export function Customizer() {
           notes: message,
         }),
       });
+      if (!response.ok) {
+        console.error("No se pudo registrar el pedido", await response.text());
+      }
     } catch {
       // El pedido en DB es un respaldo; WhatsApp sigue siendo el canal principal.
     } finally {

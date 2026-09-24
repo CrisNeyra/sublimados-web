@@ -50,15 +50,18 @@ export function Contact() {
 
     try {
       // Envío asíncrono al backend (API Route /api/pedidos)
-      await fetch("/api/pedidos", {
+      const response = await fetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          clientName: name || "Cliente Web",
+          clientName: name.trim() || "Cliente Web",
           size: size || null,
           notes: message || null,
         }),
       });
+      if (!response.ok) {
+        console.error("No se pudo registrar el pedido", await response.text());
+      }
     } catch {
       // Si falla la red o no hay DB, el flujo continúa hacia WhatsApp
     } finally {

@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const password = getAdminPassword();
   if (!password) {
     return NextResponse.json(
-      { error: "Falta ADMIN_PASSWORD en el archivo .env" },
+      { error: "Falta ADMIN_PASSWORD en las variables de Vercel" },
       { status: 500 }
     );
   }
