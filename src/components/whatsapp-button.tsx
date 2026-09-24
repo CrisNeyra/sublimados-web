@@ -6,7 +6,7 @@ export function WhatsAppButton() {
       href={whatsappLink()}
       target="_blank"
       rel="noopener noreferrer"
-      className="group fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-carbon/20 transition-all hover:scale-105 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#25D366]"
+      className="group fixed bottom-5 left-5 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-carbon/20 transition-all hover:scale-105 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#25D366] sm:left-auto sm:right-5"
       aria-label="Contactanos por WhatsApp"
     >
       <svg

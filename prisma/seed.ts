@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { CATALOG_PRODUCTS, CATALOG_REVIEWS } from "../src/lib/catalog";
 
 /**
  * Seed = script que carga datos iniciales en la base.
@@ -23,67 +24,8 @@ if (!connectionString) {
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
-const products = [
-  {
-    name: "Remera The Shirt",
-    category: "Corporativos",
-    price: "$12.000",
-    image: "/catalog/remera_TS.jpg",
-    alt: "Remera sublimada The Shirt",
-  },
-  {
-    name: "Remera Aura Dev",
-    category: "Corporativos",
-    price: "$12.500",
-    image: "/catalog/remera_auradev.jpg",
-    alt: "Remera sublimada Aura Dev",
-  },
-  {
-    name: "Remera Aura Pro",
-    category: "Corporativos",
-    price: "$13.000",
-    image: "/catalog/remera_aurapro.jpg",
-    alt: "Remera sublimada Aura Pro",
-  },
-  {
-    name: "Remera Laxmar",
-    category: "Eventos",
-    price: "$14.500",
-    image: "/catalog/remera_laxmar.jpg",
-    alt: "Remera sublimada Laxmar",
-  },
-];
-
-const reviews = [
-  {
-    name: "Lucía Fernández",
-    detail: "Pedido 10 remeras · Geométrico",
-    quote:
-      "La calidad es impresionante. Los colores quedaron tal cual la muestra y nos llegó todo en el tiempo pactado. ¡Súper recomendados!",
-    rating: 5,
-  },
-  {
-    name: "Diego Ramírez",
-    detail: "Pedido personalizado · Mascota",
-    quote:
-      "Subí una foto de mi perro y la estamparon increíble. La remera se ve hermosa y el trato por WhatsApp fue súper rápido.",
-    rating: 5,
-  },
-  {
-    name: "Carla Mendoza",
-    detail: "Pack corporativo · Logo",
-    quote:
-      "Hicieron las uniformes para la empresa con nuestro logo y quedaron impecables. Repetimos seguro para eventos internos.",
-    rating: 5,
-  },
-  {
-    name: "Julián Torres",
-    detail: "Edición especial · Evento",
-    quote:
-      "Diseñamos la remera para una fiesta temática y fue un éxito. La sublimación tiene terminación premium, se nota el cuidado.",
-    rating: 5,
-  },
-];
+const products = CATALOG_PRODUCTS.map((product) => ({ ...product }));
+const reviews = CATALOG_REVIEWS.map((review) => ({ ...review }));
 
 async function main() {
   console.log("🌱 Sembrando datos en Neon...");

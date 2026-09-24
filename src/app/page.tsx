@@ -11,6 +11,10 @@ import { Contact } from "@/components/contact";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { Footer } from "@/components/footer";
 import { prisma } from "@/lib/prisma";
+import {
+  catalogProductsFallback,
+  catalogReviewsFallback,
+} from "@/lib/catalog";
 import { SITE } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -45,6 +49,13 @@ export default async function Home() {
     ]);
   } catch (error) {
     console.error("No se pudieron cargar productos/reseñas desde Neon:", error);
+  }
+
+  if (products.length === 0) {
+    products = catalogProductsFallback();
+  }
+  if (reviews.length === 0) {
+    reviews = catalogReviewsFallback();
   }
 
   return (
