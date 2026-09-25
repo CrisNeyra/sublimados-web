@@ -16,7 +16,10 @@ export function BrandLogo({
 
   return (
     <span
-      className={cn("relative inline-block shrink-0 overflow-hidden bg-fog", className)}
+      className={cn(
+        "relative inline-block shrink-0 overflow-hidden bg-fog ring-1 ring-white/40",
+        className
+      )}
       style={{
         width: size,
         height: size,

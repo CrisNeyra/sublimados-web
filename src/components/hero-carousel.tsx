@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SLIDES = [
@@ -41,7 +40,7 @@ const SLIDES = [
   },
 ] as const;
 
-const INTERVAL_MS = 6000;
+const INTERVAL_MS = 3000;
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
@@ -66,10 +65,6 @@ export function HeroCarousel() {
   const pauseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const goTo = useCallback((index: number) => {
-    setActive((index + SLIDES.length) % SLIDES.length);
-  }, []);
-
   useEffect(() => {
     if (reducedMotion || paused) return;
     const timer = setInterval(
@@ -90,14 +85,6 @@ export function HeroCarousel() {
       // Autoplay bloqueado: el overlay y el poster cubren el fondo.
     });
   }, [reducedMotion]);
-
-  const togglePause = () => {
-    if (pauseTimeout.current) {
-      clearTimeout(pauseTimeout.current);
-      pauseTimeout.current = null;
-    }
-    setPaused((value) => !value);
-  };
 
   const slide = SLIDES[active];
 
@@ -121,7 +108,7 @@ export function HeroCarousel() {
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full scale-110 object-cover"
-            style={{ filter: "blur(8px)" }}
+            style={{ filter: "blur(4px)" }}
             autoPlay
             muted
             loop
@@ -149,7 +136,7 @@ export function HeroCarousel() {
           key={item.id}
           aria-hidden={index !== active}
           className={cn(
-            "absolute inset-0 flex items-center transition-opacity duration-700",
+            "absolute inset-0 flex items-center transition-opacity duration-1000",
             index === active ? "opacity-100" : "pointer-events-none opacity-0"
           )}
         >
@@ -213,58 +200,11 @@ export function HeroCarousel() {
         </div>
       ))}
 
-      <div className="absolute inset-x-0 bottom-6 z-10 mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6">
-        <div
-          className="flex items-center gap-2"
-          role="group"
-          aria-label="Control del carrusel"
+      <div className="absolute inset-x-0 bottom-6 z-10 mx-auto flex max-w-6xl justify-end px-4 sm:px-6">
+        <p
+          className="text-sm font-medium text-fog sm:mr-28"
+          aria-live="polite"
         >
-          <button
-            type="button"
-            onClick={togglePause}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            aria-label={paused ? "Reproducir carrusel" : "Pausar carrusel"}
-          >
-            {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-          </button>
-
-          <div className="flex items-center gap-2">
-            {SLIDES.map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => goTo(index)}
-                className={cn(
-                  "h-2 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
-                  index === active
-                    ? "w-8 bg-white"
-                    : "w-2 bg-white/30 hover:bg-white/50"
-                )}
-                aria-label={`Ir a la diapositiva ${index + 1}: ${item.title}`}
-                aria-current={index === active}
-              />
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => goTo(active - 1)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            aria-label="Diapositiva anterior"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => goTo(active + 1)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            aria-label="Diapositiva siguiente"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-
-        <p className="text-sm font-medium text-fog" aria-live="polite">
           {slide.title}
         </p>
       </div>

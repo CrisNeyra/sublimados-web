@@ -30,7 +30,7 @@ export function Navbar() {
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
         scrolled || open
           ? "bg-white/90 shadow-sm backdrop-blur-md"
-          : "bg-transparent"
+          : "bg-carbon/70 backdrop-blur-md"
       )}
     >
       <nav
@@ -39,7 +39,10 @@ export function Navbar() {
       >
         <a
           href="/#inicio"
-          className="flex items-center gap-2 font-black tracking-tight text-carbon"
+          className={cn(
+            "flex items-center gap-2 font-black tracking-tight",
+            scrolled || open ? "text-carbon" : "text-white"
+          )}
           onClick={() => setOpen(false)}
         >
           <BrandLogo size={44} />
@@ -51,7 +54,12 @@ export function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="rounded-full px-3 py-2 text-sm font-medium text-smoke transition-colors hover:bg-fog hover:text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon xl:px-4 xl:text-base"
+                className={cn(
+                  "rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 xl:px-4 xl:text-base",
+                  scrolled || open
+                    ? "text-smoke hover:bg-fog hover:text-carbon focus-visible:outline-carbon"
+                    : "text-white/90 hover:bg-white/10 hover:text-white focus-visible:outline-white"
+                )}
               >
                 {link.label}
               </a>
@@ -61,14 +69,24 @@ export function Navbar() {
 
         <a
           href="/#personalizador"
-          className="hidden rounded-full bg-carbon px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon lg:inline-flex"
+          className={cn(
+            "hidden rounded-full px-5 py-2.5 text-base font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 lg:inline-flex",
+            scrolled || open
+              ? "bg-carbon text-white hover:bg-graphite focus-visible:outline-carbon"
+              : "bg-white text-carbon hover:bg-fog focus-visible:outline-white"
+          )}
         >
           Armá tu remera
         </a>
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-carbon transition-colors hover:bg-fog focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon lg:hidden"
+          className={cn(
+            "inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden",
+            scrolled || open
+              ? "text-carbon hover:bg-fog focus-visible:outline-carbon"
+              : "text-white hover:bg-white/10 focus-visible:outline-white"
+          )}
           aria-expanded={open}
           aria-controls="menu-movil"
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
