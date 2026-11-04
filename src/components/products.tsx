@@ -82,10 +82,30 @@ function ProductCard({ product }: { product: CatalogProduct }) {
 export function Products({ products }: { products: CatalogProduct[] }) {
   const [category, setCategory] = useState<string>("Todas");
 
+  const categories = [
+    ...PRODUCT_CATEGORIES.filter(
+      (option) =>
+        option === "Todas" ||
+        products.some((product) => product.category === option)
+    ),
+    ...Array.from(new Set(products.map((product) => product.category))).filter(
+      (option) =>
+        !PRODUCT_CATEGORIES.includes(
+          option as (typeof PRODUCT_CATEGORIES)[number]
+        )
+    ),
+  ];
+
+  const activeCategory = categories.includes(
+    category as (typeof categories)[number]
+  )
+    ? category
+    : "Todas";
+
   const visibleProducts =
-    category === "Todas"
+    activeCategory === "Todas"
       ? products
-      : products.filter((product) => product.category === category);
+      : products.filter((product) => product.category === activeCategory);
 
   return (
     <section id="productos" className="scroll-mt-20 bg-white py-20 sm:py-28">
@@ -108,18 +128,18 @@ export function Products({ products }: { products: CatalogProduct[] }) {
           role="group"
           aria-label="Filtrar por categoría"
         >
-          {PRODUCT_CATEGORIES.map((option) => (
+          {categories.map((option) => (
             <button
               key={option}
               type="button"
               onClick={() => setCategory(option)}
               className={cn(
                 "rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon",
-                category === option
+                activeCategory === option
                   ? "border-carbon bg-carbon text-white"
                   : "border-silver text-smoke hover:border-carbon hover:text-carbon"
               )}
-              aria-pressed={category === option}
+              aria-pressed={activeCategory === option}
             >
               {option}
             </button>
