@@ -14,6 +14,12 @@ enum OrderStatus {
   CANCELADO
 }
 
+enum OrderSource {
+  CATALOGO
+  PERSONALIZADOR
+  CONTACTO
+}
+
 model Product {
   id          String   @id @default(cuid())
   name        String
@@ -32,6 +38,9 @@ model Order {
   design      String?
   size        String?
   notes       String?
+  quantity    Int         @default(1)
+  source      OrderSource @default(CONTACTO)
+  productName String?
   status      OrderStatus @default(NUEVO)
   createdAt   DateTime    @default(now())
 }

@@ -43,8 +43,9 @@ export default async function AdminPage() {
           Pedidos
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-smoke">
-          Acá ves lo que llega desde Contacto y el personalizador. Cambiá el
-          estado a medida que cotizás, producís o enviás.
+          Acá ves lo que llega desde el catálogo, el personalizador y Contacto.
+          El teléfono abre WhatsApp. Cambiá el estado a medida que cotizás,
+          producís o enviás.
         </p>
         {loadError ? (
           <p className="mt-8 rounded-2xl border border-red-200 bg-white p-8 text-sm text-red-700">

@@ -59,3 +59,10 @@ export const NAV_LINKS = [
 export function whatsappLink(message: string = SITE.whatsappMessage) {
   return `https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
+
+export function whatsappLinkTo(number: string, message?: string) {
+  const digits = number.replace(/\D/g, "");
+  const base = `https://wa.me/${digits}`;
+  if (!message) return base;
+  return `${base}?text=${encodeURIComponent(message)}`;
+}

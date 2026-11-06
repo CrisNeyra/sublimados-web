@@ -20,7 +20,7 @@ export default function PrivacidadPage() {
           <h1 className="mt-3 text-3xl font-black uppercase tracking-tight text-carbon sm:text-4xl">
             Cómo usamos tus datos
           </h1>
-          <p className="mt-4 text-sm text-smoke">Última actualización: septiembre 2026.</p>
+          <p className="mt-4 text-sm text-smoke">Última actualización: noviembre 2026.</p>
 
           <div className="mt-10 space-y-8 text-sm leading-7 text-carbon">
             <section>
@@ -34,9 +34,13 @@ export default function PrivacidadPage() {
             <section>
               <h2 className="text-base font-bold uppercase tracking-tight">Qué datos reunimos</h2>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-smoke">
-                <li>Nombre, talle y consulta del formulario de contacto.</li>
                 <li>
-                  Preferencias del personalizador (color, diseño, posición, rotación, talle y notas).
+                  Nombre, WhatsApp, cantidad, talle y consulta cuando cotizás desde el catálogo o
+                  el formulario de contacto.
+                </li>
+                <li>
+                  Preferencias del personalizador (color, diseño, posición, rotación, talle,
+                  cantidad y notas), junto con tu nombre y WhatsApp.
                 </li>
                 <li>Mensajes que nos mandás por WhatsApp, incluido el archivo de tu diseño.</li>
                 <li>Datos técnicos mínimos del navegador (por ejemplo, para que el sitio funcione).</li>

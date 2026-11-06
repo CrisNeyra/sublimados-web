@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, MessageSquareShare, Check, RefreshCw } from "lucide-react";
 import { SITE, whatsappLink } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { usePlaceOrder } from "@/lib/use-place-order";
 
 const TSHIRT_COLORS = [
   { id: "black", name: "Negro Carbón", hex: "#0b0b0b", textColor: "#ffffff", border: "#374151" },
@@ -124,7 +125,10 @@ export function Customizer() {
   const [selectedDesign, setSelectedDesign] = useState<(typeof DESIGNS)[number]>(DESIGNS[0]);
   const [selectedSize, setSelectedSize] = useState<string>("L");
   const [customNote, setCustomNote] = useState("");
-  const [isSending, setIsSending] = useState(false);
+  const [clientName, setClientName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [quantity, setQuantity] = useState("1");
+  const { isSending, error, setError, submit } = usePlaceOrder();
   const [printPosition, setPrintPosition] = useState<(typeof PRINT_POSITIONS)[number]>(PRINT_POSITIONS[1]);
   const [printHorizontal, setPrintHorizontal] = useState<(typeof PRINT_HORIZONTAL)[number]>(PRINT_HORIZONTAL[1]);
   const [printScale, setPrintScale] = useState<(typeof PRINT_SCALES)[number]>(PRINT_SCALES[1]);
@@ -158,6 +162,10 @@ export function Customizer() {
     setSelectedDesign(DESIGNS[0]);
     setSelectedSize("L");
     setCustomNote("");
+    setClientName("");
+    setWhatsapp("");
+    setQuantity("1");
+    setError("");
     setPrintPosition(PRINT_POSITIONS[1]);
     setPrintHorizontal(PRINT_HORIZONTAL[1]);
     setPrintScale(PRINT_SCALES[1]);
@@ -226,6 +234,8 @@ export function Customizer() {
   };
 
   const message = `¡Hola! Usé el personalizador de ${SITE.name} y quiero cotizar esta remera:
+- Nombre: ${clientName.trim() || "—"}
+- Cantidad: ${quantity || "1"}
 - Modelo: ${selectedColor.name}
 - Estampado: ${selectedDesign.name}${isCustomDesign && customNote ? ` (Detalle: ${customNote})` : ""}
 - Posición vertical: ${printPosition.label} (${Math.round(printY)}%)
@@ -238,38 +248,29 @@ export function Customizer() {
 ¿Podrían indicarme precio y tiempos de entrega?`;
 
   const sendQuote = async () => {
-    setIsSending(true);
-    try {
-      const response = await fetch("/api/pedidos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientName: "Cliente Personalizador",
-          size: selectedSize,
-          tshirtColor: selectedColor.name,
-          design: [
-            selectedDesign.name,
-            `V ${printPosition.label} ${Math.round(printY)}%`,
-            `H ${printHorizontal.label} ${Math.round(printX)}%`,
-            `rotación ${printRotation.label}`,
-            `tamaño ${printScale.label}`,
-            uploadPreview ? "con imagen de vista previa" : null,
-            isCustomDesign && customNote ? customNote : null,
-          ]
-            .filter(Boolean)
-            .join(" · "),
-          notes: message,
-        }),
-      });
-      if (!response.ok) {
-        console.error("No se pudo registrar el pedido", await response.text());
-      }
-    } catch {
-      // El pedido en DB es un respaldo; WhatsApp sigue siendo el canal principal.
-    } finally {
-      setIsSending(false);
-      window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
-    }
+    await submit(
+      {
+        clientName,
+        whatsapp,
+        quantity,
+        source: "PERSONALIZADOR",
+        size: selectedSize,
+        tshirtColor: selectedColor.name,
+        design: [
+          selectedDesign.name,
+          `V ${printPosition.label} ${Math.round(printY)}%`,
+          `H ${printHorizontal.label} ${Math.round(printX)}%`,
+          `rotación ${printRotation.label}`,
+          `tamaño ${printScale.label}`,
+          uploadPreview ? "con imagen de vista previa" : null,
+          isCustomDesign && customNote ? customNote : null,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        notes: message,
+      },
+      whatsappLink(message)
+    );
   };
 
   const printBoxPx = Math.round(112 * printScale.value);
@@ -286,7 +287,7 @@ export function Customizer() {
             Personalizá tu remera en vivo
           </h2>
           <p className="mt-3 text-base text-smoke">
-            Elegí color, diseño, posición, rotación y talle. Arrastrá el estampado sobre el torso y cotizá por WhatsApp.
+            Elegí color, diseño, posición, rotación y talle. Dejá tu nombre, WhatsApp y cantidad para cotizar.
           </p>
         </div>
 
@@ -592,23 +593,71 @@ export function Customizer() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-silver bg-white p-5 shadow-sm">
+            <form
+              className="rounded-2xl border border-silver bg-white p-5 shadow-sm"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void sendQuote();
+              }}
+            >
               <div className="flex flex-col gap-1 text-xs text-smoke sm:flex-row sm:items-center sm:justify-between">
                 <span>Resumen de selección:</span>
                 <span className="font-bold text-carbon">
                   {selectedColor.name} · {selectedDesign.name} · {printPosition.label}/{printHorizontal.label} · {printRotation.label} · {printScale.label} · {selectedSize}
                 </span>
               </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <label className="block text-xs font-bold uppercase tracking-wider text-smoke">
+                  Tu nombre
+                  <input
+                    value={clientName}
+                    onChange={(event) => setClientName(event.target.value)}
+                    autoComplete="name"
+                    placeholder="Ej: Lucía"
+                    required
+                    className="mt-1.5 w-full rounded-xl border border-silver bg-fog px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-carbon placeholder:text-mist focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20"
+                  />
+                </label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-smoke">
+                  WhatsApp
+                  <input
+                    value={whatsapp}
+                    onChange={(event) => setWhatsapp(event.target.value)}
+                    autoComplete="tel"
+                    inputMode="tel"
+                    placeholder="11 1234 5678"
+                    required
+                    className="mt-1.5 w-full rounded-xl border border-silver bg-fog px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-carbon placeholder:text-mist focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20"
+                  />
+                </label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-smoke">
+                  Cantidad
+                  <input
+                    value={quantity}
+                    onChange={(event) => setQuantity(event.target.value)}
+                    inputMode="numeric"
+                    min={1}
+                    max={500}
+                    required
+                    className="mt-1.5 w-full rounded-xl border border-silver bg-fog px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-carbon focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20"
+                  />
+                </label>
+              </div>
+              <p className="mt-2 text-[11px] text-smoke">WhatsApp con código de área, sin 0 ni 15.</p>
+              {error && (
+                <p className="mt-3 text-sm text-red-700" role="alert">
+                  {error}
+                </p>
+              )}
               <button
-                type="button"
-                onClick={sendQuote}
+                type="submit"
                 disabled={isSending}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
               >
                 <MessageSquareShare className="h-4 w-4" />
                 {isSending ? "Guardando pedido..." : "Cotizar este Mockup por WhatsApp"}
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>

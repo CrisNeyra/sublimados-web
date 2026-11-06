@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { OrderStatus } from "@prisma/client";
+import { ORDER_SOURCE_LABELS, type OrderSourceValue } from "@/lib/order-payload";
+import { SITE, whatsappLinkTo } from "@/lib/site";
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   NUEVO: "Nuevo",
@@ -22,6 +24,9 @@ export type AdminOrder = {
   design: string | null;
   size: string | null;
   notes: string | null;
+  quantity: number;
+  source: OrderSourceValue;
+  productName: string | null;
   status: OrderStatus;
   createdAt: string;
 };
@@ -106,17 +111,38 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
                   {order.createdAt}
                 </td>
                 <td className="px-4 py-3">
-                  <p className="font-semibold text-carbon">{order.clientName}</p>
+                  <p className="font-semibold text-carbon">
+                    {order.clientName}
+                    <span className="ml-2 text-xs font-bold text-smoke">×{order.quantity}</span>
+                  </p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-smoke">
+                    {ORDER_SOURCE_LABELS[order.source] ?? order.source}
+                  </p>
                   {order.whatsapp && (
-                    <p className="text-xs text-smoke">{order.whatsapp}</p>
+                    <a
+                      href={whatsappLinkTo(
+                        order.whatsapp,
+                        `Hola ${order.clientName}, te escribimos de ${SITE.name} por tu pedido.`
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-block text-xs font-semibold text-carbon underline underline-offset-2"
+                    >
+                      {order.whatsapp}
+                    </a>
                   )}
                 </td>
                 <td className="px-4 py-3 text-smoke">
-                  {[order.tshirtColor, order.design, order.size]
+                  {[
+                    order.productName,
+                    order.tshirtColor,
+                    order.design,
+                    order.size && `Talle ${order.size}`,
+                  ]
                     .filter(Boolean)
                     .join(" · ") || "—"}
                   {order.notes && (
-                    <p className="mt-1 text-xs">{order.notes}</p>
+                    <p className="mt-1 whitespace-pre-line text-xs">{order.notes}</p>
                   )}
                 </td>
                 <td className="px-4 py-3">

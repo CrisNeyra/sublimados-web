@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PRODUCT_CATEGORIES, SIZES } from "./products-data";
-import { whatsappLink } from "@/lib/site";
+import { QuoteDialog } from "@/components/quote-dialog";
 
 export type CatalogProduct = {
   id: string;
@@ -16,10 +16,14 @@ export type CatalogProduct = {
   alt: string;
 };
 
-function ProductCard({ product }: { product: CatalogProduct }) {
+function ProductCard({
+  product,
+  onQuote,
+}: {
+  product: CatalogProduct;
+  onQuote: (product: CatalogProduct, size: string) => void;
+}) {
   const [size, setSize] = useState<string>("L");
-
-  const message = `¡Hola! Quiero cotizar la remera "${product.name}" (${product.price}), talle ${size}. ¿Tienen este diseño disponible?`;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-silver bg-white transition-all duration-300 hover:-translate-y-1 hover:border-mist hover:shadow-xl hover:shadow-carbon/5">
@@ -65,15 +69,14 @@ function ProductCard({ product }: { product: CatalogProduct }) {
           </div>
         </fieldset>
 
-        <a
-          href={whatsappLink(message)}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => onQuote(product, size)}
           className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-carbon px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon"
         >
           Cotizar por WhatsApp
           <ArrowUpRight className="h-4 w-4" />
-        </a>
+        </button>
       </div>
     </article>
   );
@@ -81,6 +84,9 @@ function ProductCard({ product }: { product: CatalogProduct }) {
 
 export function Products({ products }: { products: CatalogProduct[] }) {
   const [category, setCategory] = useState<string>("Todas");
+  const [draft, setDraft] = useState<{ product: CatalogProduct; size: string } | null>(
+    null
+  );
 
   const categories = [
     ...PRODUCT_CATEGORIES.filter(
@@ -118,8 +124,8 @@ export function Products({ products }: { products: CatalogProduct[] }) {
             Nuestras remeras
           </h2>
           <p className="mt-4 text-base leading-7 text-smoke">
-            Diseños infinitos que se subliman en cada prenda. Elegí un modelo y
-            contanos tu idea, nosotros la estampamos.
+            Diseños infinitos que se subliman en cada prenda. Elegí talle,
+            dejá tu nombre y WhatsApp, y te cotizamos la cantidad.
           </p>
         </div>
 
@@ -149,7 +155,10 @@ export function Products({ products }: { products: CatalogProduct[] }) {
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {visibleProducts.map((product) => (
             <li key={product.id} className="h-full">
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                onQuote={(item, size) => setDraft({ product: item, size })}
+              />
             </li>
           ))}
         </ul>
@@ -169,17 +178,21 @@ export function Products({ products }: { products: CatalogProduct[] }) {
             . Enviá tu imagen o idea y la sublimamos.
           </p>
           <a
-            href={whatsappLink(
-              "¡Hola! Quiero un diseño personalizado para una remera sublimada."
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#personalizador"
             className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-carbon px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon"
           >
-            Pedir diseño personalizado
+            Armarlo en el personalizador
           </a>
         </div>
       </div>
+      {draft && (
+        <QuoteDialog
+          key={`${draft.product.id}-${draft.size}`}
+          product={draft.product}
+          size={draft.size}
+          onClose={() => setDraft(null)}
+        />
+      )}
     </section>
   );
 }

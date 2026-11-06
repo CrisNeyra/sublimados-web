@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Clock, MapPin, MessageCircle, Send } from "lucide-react";
-import { SITE, whatsappLink } from "@/lib/site";
+import { whatsappLink } from "@/lib/site";
+import { usePlaceOrder } from "@/lib/use-place-order";
 
 const CONTACT_INFO = [
   {
@@ -28,46 +29,36 @@ Mi consulta:`;
 
 export function Contact() {
   const [name, setName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [size, setSize] = useState("");
+  const [quantity, setQuantity] = useState("1");
   const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isSending, error, submit } = usePlaceOrder();
 
   const composed = [
-    name.trim() && `Me llamo ${name}.`,
+    name.trim() && `Me llamo ${name.trim()}.`,
+    `Cantidad: ${quantity || "1"}.`,
     size.trim() && `Busco talle ${size}.`,
     message.trim() && message.trim(),
   ]
     .filter(Boolean)
     .join("\n");
 
-  const whatsappHref = whatsappLink(
-    composed ? `${INITIAL_MESSAGE}\n${composed}` : SITE.whatsappMessage
-  );
+  const whatsappHref = whatsappLink(`${INITIAL_MESSAGE}\n${composed}`);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // Envío asíncrono al backend (API Route /api/pedidos)
-      const response = await fetch("/api/pedidos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientName: name.trim() || "Cliente Web",
-          size: size || null,
-          notes: message || null,
-        }),
-      });
-      if (!response.ok) {
-        console.error("No se pudo registrar el pedido", await response.text());
-      }
-    } catch {
-      // Si falla la red o no hay DB, el flujo continúa hacia WhatsApp
-    } finally {
-      setIsSubmitting(false);
-      window.open(whatsappHref, "_blank", "noopener,noreferrer");
-    }
+    await submit(
+      {
+        clientName: name,
+        whatsapp,
+        quantity,
+        source: "CONTACTO",
+        size: size || null,
+        notes: composed,
+      },
+      whatsappHref
+    );
   };
 
   return (
@@ -140,8 +131,30 @@ export function Contact() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Ej: Lucía"
+                  required
                   className="w-full rounded-xl border border-silver bg-fog px-4 py-3 text-sm text-carbon placeholder:text-mist focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20"
                 />
+              </div>
+              <div>
+                <label
+                  htmlFor="whatsapp"
+                  className="mb-1.5 block text-sm font-medium text-carbon"
+                >
+                  WhatsApp
+                </label>
+                <input
+                  id="whatsapp"
+                  name="whatsapp"
+                  type="tel"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  value={whatsapp}
+                  onChange={(event) => setWhatsapp(event.target.value)}
+                  placeholder="11 1234 5678"
+                  required
+                  className="w-full rounded-xl border border-silver bg-fog px-4 py-3 text-sm text-carbon placeholder:text-mist focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20"
+                />
+                <p className="mt-1.5 text-xs text-smoke">Código de área, sin 0 ni 15.</p>
               </div>
               <div>
                 <label
@@ -165,6 +178,25 @@ export function Contact() {
                   ))}
                 </select>
               </div>
+              <div>
+                <label
+                  htmlFor="cantidad"
+                  className="mb-1.5 block text-sm font-medium text-carbon"
+                >
+                  Cantidad
+                </label>
+                <input
+                  id="cantidad"
+                  name="cantidad"
+                  inputMode="numeric"
+                  min={1}
+                  max={500}
+                  value={quantity}
+                  onChange={(event) => setQuantity(event.target.value)}
+                  required
+                  className="w-full rounded-xl border border-silver bg-fog px-4 py-3 text-sm text-carbon focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20"
+                />
+              </div>
               <div className="sm:col-span-2">
                 <label
                   htmlFor="mensaje"
@@ -183,12 +215,17 @@ export function Contact() {
                 />
               </div>
             </div>
+            {error && (
+              <p className="mt-4 text-sm text-red-700" role="alert">
+                {error}
+              </p>
+            )}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSending}
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-carbon px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon disabled:opacity-75"
             >
-              {isSubmitting ? "Procesando..." : "Enviar por WhatsApp"}
+              {isSending ? "Procesando..." : "Enviar por WhatsApp"}
               <Send className="h-4 w-4" aria-hidden="true" />
             </button>
             <p className="mt-3 text-center text-xs leading-5 text-smoke">

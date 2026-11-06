@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/prisma";
-
-function clip(value: unknown, max: number): string | null {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  return trimmed.slice(0, max);
-}
+import { parseOrderPayload } from "@/lib/order-payload";
 
 export async function POST(request: Request) {
   try {
@@ -18,36 +12,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json().catch(() => ({}));
-    const clientName = clip(body.clientName, 80);
-    const whatsapp = clip(body.whatsapp, 40);
-    const tshirtColor = clip(body.tshirtColor, 80);
-    const design = clip(body.design, 500);
-    const size = clip(body.size, 20);
-    const notes = clip(body.notes, 4000);
-
-    if (!clientName) {
-      return NextResponse.json(
-        { error: "El nombre del cliente es obligatorio" },
-        { status: 400 }
-      );
+    const body = await request.json().catch(() => null);
+    const parsed = parseOrderPayload(body);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
     const order = await prisma.order.create({
-      data: {
-        clientName,
-        whatsapp,
-        tshirtColor,
-        design,
-        size,
-        notes,
-      },
+      data: parsed.data,
     });
 
-    return NextResponse.json(
-      { success: true, id: order.id },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, id: order.id }, { status: 201 });
   } catch (error) {
     console.error("Error al procesar el pedido:", error);
     return NextResponse.json(
