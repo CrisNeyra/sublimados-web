@@ -41,8 +41,10 @@ model Order {
   quantity    Int         @default(1)
   source      OrderSource @default(CONTACTO)
   productName String?
-  status      OrderStatus @default(NUEVO)
-  createdAt   DateTime    @default(now())
+  designPreview    Bytes?
+  hasDesignPreview Boolean     @default(false)
+  status           OrderStatus @default(NUEVO)
+  createdAt        DateTime    @default(now())
 }
 
 model Review {

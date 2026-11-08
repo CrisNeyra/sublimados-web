@@ -9,6 +9,7 @@ export const ORDER_SOURCE_LABELS: Record<OrderSourceValue, string> = {
 };
 
 export const MAX_ORDER_QUANTITY = 500;
+export const MAX_DESIGN_PREVIEW_BYTES = 700 * 1024;
 
 export type OrderDraft = {
   clientName: string;
@@ -20,7 +21,47 @@ export type OrderDraft = {
   size: string | null;
   notes: string | null;
   productName: string | null;
+  designPreview: Uint8Array | null;
 };
+
+function decodeDesignPreview(
+  value: unknown
+): { ok: true; data: Uint8Array | null } | { ok: false; error: string } {
+  if (value == null || value === "") return { ok: true, data: null };
+  if (typeof value !== "string") {
+    return { ok: false, error: "La imagen del diseño no es válida" };
+  }
+
+  const base64 = value.replace(/^data:image\/jpeg;base64,/i, "").replace(/\s/g, "");
+  const maxChars = Math.ceil((MAX_DESIGN_PREVIEW_BYTES * 4) / 3) + 4;
+  if (!base64 || base64.length > maxChars) {
+    return { ok: false, error: "La imagen del diseño es demasiado grande" };
+  }
+
+  let binary: string;
+  try {
+    binary = atob(base64);
+  } catch {
+    return { ok: false, error: "La imagen del diseño no es válida" };
+  }
+
+  if (binary.length > MAX_DESIGN_PREVIEW_BYTES) {
+    return { ok: false, error: "La imagen del diseño es demasiado grande" };
+  }
+
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  const isJpeg =
+    bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  if (!isJpeg) {
+    return { ok: false, error: "La imagen del diseño tiene que ser JPEG" };
+  }
+
+  return { ok: true, data: bytes };
+}
 
 function clip(value: unknown, max: number): string | null {
   if (typeof value !== "string") return null;
@@ -90,6 +131,9 @@ export function parseOrderPayload(
     return { ok: false, error: "Origen de pedido inválido" };
   }
 
+  const designPreview = decodeDesignPreview(raw.designImage);
+  if (!designPreview.ok) return designPreview;
+
   return {
     ok: true,
     data: {
@@ -102,6 +146,7 @@ export function parseOrderPayload(
       size: clip(raw.size, 20),
       notes: clip(raw.notes, 4000),
       productName: clip(raw.productName, 120),
+      designPreview: designPreview.data,
     },
   };
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, MessageSquareShare, Check, RefreshCw } from "lucide-react";
 import { SITE, whatsappLink } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { compressDesignFile } from "@/lib/compress-design";
 import { usePlaceOrder } from "@/lib/use-place-order";
 
 const TSHIRT_COLORS = [
@@ -137,6 +138,7 @@ export function Customizer() {
   const [printY, setPrintY] = useState(35);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [designImage, setDesignImage] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const shirtRef = useRef<HTMLDivElement>(null);
@@ -153,6 +155,7 @@ export function Customizer() {
   const clearUpload = () => {
     if (uploadPreview) URL.revokeObjectURL(uploadPreview);
     setUploadPreview(null);
+    setDesignImage(null);
     setUploadError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -175,9 +178,10 @@ export function Customizer() {
     clearUpload();
   };
 
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setUploadError("");
+    setDesignImage(null);
     if (!file) return;
 
     const allowed = ["image/png", "image/jpeg", "image/webp"];
@@ -193,6 +197,16 @@ export function Customizer() {
     if (uploadPreview) URL.revokeObjectURL(uploadPreview);
     setUploadPreview(URL.createObjectURL(file));
     setSelectedDesign(customDesign);
+
+    try {
+      setDesignImage(await compressDesignFile(file));
+    } catch (cause) {
+      setUploadError(
+        cause instanceof Error
+          ? cause.message
+          : "No se pudo preparar la imagen para el pedido."
+      );
+    }
   };
 
   const applyVertical = (pos: (typeof PRINT_POSITIONS)[number]) => {
@@ -233,6 +247,13 @@ export function Customizer() {
     setIsDragging(false);
   };
 
+  const savedPreview = Boolean(isCustomDesign && designImage);
+  const imageNote = savedPreview
+    ? "guardamos una vista previa con el pedido; el archivo en alta lo mando por acá"
+    : uploadPreview
+      ? "la vista previa no se pudo guardar; mando el archivo por acá"
+      : "no";
+
   const message = `¡Hola! Usé el personalizador de ${SITE.name} y quiero cotizar esta remera:
 - Nombre: ${clientName.trim() || "—"}
 - Cantidad: ${quantity || "1"}
@@ -242,7 +263,7 @@ export function Customizer() {
 - Posición horizontal: ${printHorizontal.label} (${Math.round(printX)}%)
 - Rotación: ${printRotation.label}
 - Tamaño del estampado: ${printScale.label}
-- Imagen subida en la web: ${uploadPreview ? "sí (vista previa; mando el archivo original por acá)" : "no"}
+- Imagen: ${imageNote}
 - Talle: ${selectedSize}
 
 ¿Podrían indicarme precio y tiempos de entrega?`;
@@ -262,12 +283,13 @@ export function Customizer() {
           `H ${printHorizontal.label} ${Math.round(printX)}%`,
           `rotación ${printRotation.label}`,
           `tamaño ${printScale.label}`,
-          uploadPreview ? "con imagen de vista previa" : null,
+          savedPreview ? "con vista previa guardada" : null,
           isCustomDesign && customNote ? customNote : null,
         ]
           .filter(Boolean)
           .join(" · "),
         notes: message,
+        designImage: savedPreview ? designImage : undefined,
       },
       whatsappLink(message)
     );

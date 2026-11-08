@@ -9,7 +9,7 @@ export const FAQ_ITEMS = [
   {
     question: "¿Cómo mando mi diseño?",
     answer:
-      "Podés subir una vista previa (PNG, JPG o WebP) en el personalizador. El archivo final en alta resolución lo enviás por WhatsApp. Cuanto más nítida esté la imagen, mejor queda la sublimación.",
+      "Podés subir una vista previa (PNG, JPG o WebP) en el personalizador. Guardamos una copia reducida con el pedido. El archivo final en alta resolución lo enviás por WhatsApp. Cuanto más nítida esté la imagen, mejor queda la sublimación.",
   },
   {
     question: "¿Qué talles tienen?",

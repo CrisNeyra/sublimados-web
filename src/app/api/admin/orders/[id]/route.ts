@@ -28,6 +28,7 @@ export async function PATCH(
     const order = await prisma.order.update({
       where: { id },
       data: { status: status as OrderStatus },
+      select: { id: true, status: true },
     });
 
     return NextResponse.json({ success: true, data: order });

@@ -46,8 +46,9 @@ export default function PrivacidadPage() {
                 <li>Datos técnicos mínimos del navegador (por ejemplo, para que el sitio funcione).</li>
               </ul>
               <p className="mt-2 text-smoke">
-                La imagen que subís al personalizador es solo una vista previa en tu dispositivo: no
-                la guardamos en nuestro servidor. El archivo de producción lo recibimos por WhatsApp.
+                Si subís un diseño en el personalizador, guardamos una copia reducida junto con el
+                pedido para poder producirlo. El archivo final en alta resolución lo recibimos por
+                WhatsApp.
               </p>
             </section>
 

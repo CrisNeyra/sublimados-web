@@ -19,7 +19,20 @@ export async function POST(request: Request) {
     }
 
     const order = await prisma.order.create({
-      data: parsed.data,
+      data: {
+        clientName: parsed.data.clientName,
+        whatsapp: parsed.data.whatsapp,
+        quantity: parsed.data.quantity,
+        source: parsed.data.source,
+        tshirtColor: parsed.data.tshirtColor,
+        design: parsed.data.design,
+        size: parsed.data.size,
+        notes: parsed.data.notes,
+        productName: parsed.data.productName,
+        designPreview: parsed.data.designPreview,
+        hasDesignPreview: Boolean(parsed.data.designPreview),
+      },
+      select: { id: true },
     });
 
     return NextResponse.json({ success: true, id: order.id }, { status: 201 });

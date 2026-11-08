@@ -1,5 +1,5 @@
 import { getPrisma } from "@/lib/prisma";
-import { OrdersTable } from "./orders-table";
+import { OrdersTable, type AdminOrder } from "./orders-table";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +20,32 @@ export default async function AdminPage() {
     );
   }
 
-  let orders: Awaited<ReturnType<typeof prisma.order.findMany>> = [];
+  let orders: AdminOrder[] = [];
   let loadError = "";
 
   try {
-    orders = await prisma.order.findMany({
+    const rows = await prisma.order.findMany({
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        clientName: true,
+        whatsapp: true,
+        tshirtColor: true,
+        design: true,
+        size: true,
+        notes: true,
+        quantity: true,
+        source: true,
+        productName: true,
+        status: true,
+        hasDesignPreview: true,
+        createdAt: true,
+      },
     });
+    orders = rows.map((order) => ({
+      ...order,
+      createdAt: order.createdAt.toISOString().slice(0, 16).replace("T", " "),
+    }));
   } catch (error) {
     console.error("No se pudieron cargar pedidos:", error);
     loadError =
@@ -53,15 +72,7 @@ export default async function AdminPage() {
           </p>
         ) : (
           <div className="mt-8">
-            <OrdersTable
-              orders={orders.map((order) => ({
-                ...order,
-                createdAt: order.createdAt
-                  .toISOString()
-                  .slice(0, 16)
-                  .replace("T", " "),
-              }))}
-            />
+            <OrdersTable orders={orders} />
           </div>
         )}
       </div>

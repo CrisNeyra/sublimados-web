@@ -27,6 +27,7 @@ export type AdminOrder = {
   quantity: number;
   source: OrderSourceValue;
   productName: string | null;
+  hasDesignPreview: boolean;
   status: OrderStatus;
   createdAt: string;
 };
@@ -143,6 +144,20 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
                     .join(" · ") || "—"}
                   {order.notes && (
                     <p className="mt-1 whitespace-pre-line text-xs">{order.notes}</p>
+                  )}
+                  {order.hasDesignPreview && (
+                    <a
+                      href={`/api/admin/orders/${order.id}/preview`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-block"
+                    >
+                      <img
+                        src={`/api/admin/orders/${order.id}/preview`}
+                        alt={`Diseño de ${order.clientName}`}
+                        className="h-16 w-16 rounded-lg border border-silver object-cover"
+                      />
+                    </a>
                   )}
                 </td>
                 <td className="px-4 py-3">
