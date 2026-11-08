@@ -5,6 +5,7 @@ import { Sparkles, MessageSquareShare, Check, RefreshCw } from "lucide-react";
 import { SITE, whatsappLink } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { compressDesignFile } from "@/lib/compress-design";
+import { estimateShipping } from "@/lib/shipping";
 import { usePlaceOrder } from "@/lib/use-place-order";
 
 const TSHIRT_COLORS = [
@@ -129,6 +130,8 @@ export function Customizer() {
   const [clientName, setClientName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [quantity, setQuantity] = useState("1");
+  const [postalCode, setPostalCode] = useState("");
+  const [captureError, setCaptureError] = useState("");
   const { isSending, error, setError, submit } = usePlaceOrder();
   const [printPosition, setPrintPosition] = useState<(typeof PRINT_POSITIONS)[number]>(PRINT_POSITIONS[1]);
   const [printHorizontal, setPrintHorizontal] = useState<(typeof PRINT_HORIZONTAL)[number]>(PRINT_HORIZONTAL[1]);
@@ -138,7 +141,6 @@ export function Customizer() {
   const [printY, setPrintY] = useState(35);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
-  const [designImage, setDesignImage] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const shirtRef = useRef<HTMLDivElement>(null);
@@ -155,7 +157,6 @@ export function Customizer() {
   const clearUpload = () => {
     if (uploadPreview) URL.revokeObjectURL(uploadPreview);
     setUploadPreview(null);
-    setDesignImage(null);
     setUploadError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -178,10 +179,9 @@ export function Customizer() {
     clearUpload();
   };
 
-  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setUploadError("");
-    setDesignImage(null);
     if (!file) return;
 
     const allowed = ["image/png", "image/jpeg", "image/webp"];
@@ -197,16 +197,6 @@ export function Customizer() {
     if (uploadPreview) URL.revokeObjectURL(uploadPreview);
     setUploadPreview(URL.createObjectURL(file));
     setSelectedDesign(customDesign);
-
-    try {
-      setDesignImage(await compressDesignFile(file));
-    } catch (cause) {
-      setUploadError(
-        cause instanceof Error
-          ? cause.message
-          : "No se pudo preparar la imagen para el pedido."
-      );
-    }
   };
 
   const applyVertical = (pos: (typeof PRINT_POSITIONS)[number]) => {
@@ -247,12 +237,7 @@ export function Customizer() {
     setIsDragging(false);
   };
 
-  const savedPreview = Boolean(isCustomDesign && designImage);
-  const imageNote = savedPreview
-    ? "guardamos una vista previa con el pedido; el archivo en alta lo mando por acá"
-    : uploadPreview
-      ? "la vista previa no se pudo guardar; mando el archivo por acá"
-      : "no";
+  const shipping = estimateShipping(postalCode);
 
   const message = `¡Hola! Usé el personalizador de ${SITE.name} y quiero cotizar esta remera:
 - Nombre: ${clientName.trim() || "—"}
@@ -263,12 +248,53 @@ export function Customizer() {
 - Posición horizontal: ${printHorizontal.label} (${Math.round(printX)}%)
 - Rotación: ${printRotation.label}
 - Tamaño del estampado: ${printScale.label}
-- Imagen: ${imageNote}
+- Imagen: te dejo la remera armada en el pedido; el archivo en alta lo mando por acá
 - Talle: ${selectedSize}
+${shipping ? `- ${shipping.summary}` : ""}
 
 ¿Podrían indicarme precio y tiempos de entrega?`;
 
+  async function captureMockup() {
+    const node = shirtRef.current;
+    if (!node) throw new Error("No se ve la remera para guardarla.");
+    const { toBlob } = await import("html-to-image");
+    const blob = await toBlob(node, { pixelRatio: 2, cacheBust: true });
+    if (!blob) throw new Error("No se pudo guardar la imagen.");
+    return blob;
+  }
+
+  const downloadMockup = async () => {
+    setCaptureError("");
+    try {
+      const blob = await captureMockup();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "remera-the-shirt.png";
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (cause) {
+      setCaptureError(
+        cause instanceof Error ? cause.message : "No se pudo guardar la imagen."
+      );
+    }
+  };
+
   const sendQuote = async () => {
+    setCaptureError("");
+    let mockupImage: string | undefined;
+    try {
+      const blob = await captureMockup();
+      const file = new File([blob], "remera.png", { type: blob.type || "image/png" });
+      mockupImage = await compressDesignFile(file);
+    } catch (cause) {
+      setCaptureError(
+        cause instanceof Error
+          ? `${cause.message} El pedido se envía igual.`
+          : "No se pudo adjuntar la remera armada. El pedido se envía igual."
+      );
+    }
+
     await submit(
       {
         clientName,
@@ -283,13 +309,13 @@ export function Customizer() {
           `H ${printHorizontal.label} ${Math.round(printX)}%`,
           `rotación ${printRotation.label}`,
           `tamaño ${printScale.label}`,
-          savedPreview ? "con vista previa guardada" : null,
+          mockupImage ? "con remera armada" : null,
           isCustomDesign && customNote ? customNote : null,
         ]
           .filter(Boolean)
           .join(" · "),
         notes: message,
-        designImage: savedPreview ? designImage : undefined,
+        designImage: mockupImage,
       },
       whatsappLink(message)
     );
@@ -393,14 +419,28 @@ export function Customizer() {
               Arrastrá el estampado sobre el torso. Los botones también lo alinean.
             </p>
 
-            <button
-              type="button"
-              onClick={resetAll}
-              className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-smoke hover:text-carbon transition-colors"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              Restablecer simulador
-            </button>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => void downloadMockup()}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-carbon hover:text-graphite"
+              >
+                Guardar imagen
+              </button>
+              <button
+                type="button"
+                onClick={resetAll}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-smoke hover:text-carbon transition-colors"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Restablecer simulador
+              </button>
+            </div>
+            {captureError && (
+              <p className="mt-2 text-center text-xs text-red-700" role="alert">
+                {captureError}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-8 lg:col-span-6">
@@ -665,7 +705,20 @@ export function Customizer() {
                   />
                 </label>
               </div>
-              <p className="mt-2 text-[11px] text-smoke">WhatsApp con código de área, sin 0 ni 15.</p>
+              <label className="mt-3 block text-xs font-bold uppercase tracking-wider text-smoke">
+                Código postal
+                <input
+                  value={postalCode}
+                  onChange={(event) => setPostalCode(event.target.value)}
+                  inputMode="numeric"
+                  placeholder="Ej: 1425"
+                  className="mt-1.5 w-full rounded-xl border border-silver bg-fog px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-carbon placeholder:text-mist focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20 sm:max-w-xs"
+                />
+              </label>
+              <p className="mt-2 text-[11px] text-smoke">
+                WhatsApp con código de área, sin 0 ni 15.
+                {shipping ? ` ${shipping.summary}` : " El envío estimado aparece con un CP de 4 dígitos."}
+              </p>
               {error && (
                 <p className="mt-3 text-sm text-red-700" role="alert">
                   {error}

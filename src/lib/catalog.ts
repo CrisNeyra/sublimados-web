@@ -1,3 +1,12 @@
+export type CatalogProduct = {
+  id: string;
+  name: string;
+  category: string;
+  price: string;
+  image: string;
+  alt: string;
+};
+
 export const CATALOG_PRODUCTS = [
   {
     name: "Remera The Shirt",
@@ -26,6 +35,13 @@ export const CATALOG_PRODUCTS = [
     price: "$14.500",
     image: "/catalog/remera_laxmar.jpg",
     alt: "Remera sublimada Laxmar",
+  },
+  {
+    name: "Bordado a elección",
+    category: "Bordados",
+    price: "$15.000",
+    image: "/catalog/remera_TS.jpg",
+    alt: "Prenda de referencia para bordado. El motivo se elige en la ficha.",
   },
 ] as const;
 

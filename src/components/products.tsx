@@ -4,89 +4,46 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PRODUCT_CATEGORIES, SIZES } from "./products-data";
-import { QuoteDialog } from "@/components/quote-dialog";
+import Link from "next/link";
+import { PRODUCT_CATEGORIES } from "./products-data";
+import { priceFrom } from "@/lib/price";
+import type { CatalogProduct } from "@/lib/catalog";
 
-export type CatalogProduct = {
-  id: string;
-  name: string;
-  category: string;
-  price: string;
-  image: string;
-  alt: string;
-};
+export type { CatalogProduct };
 
-function ProductCard({
-  product,
-  onQuote,
-}: {
-  product: CatalogProduct;
-  onQuote: (product: CatalogProduct, size: string) => void;
-}) {
-  const [size, setSize] = useState<string>("L");
-
+function ProductCard({ product }: { product: CatalogProduct }) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-silver bg-white transition-all duration-300 hover:-translate-y-1 hover:border-mist hover:shadow-xl hover:shadow-carbon/5">
-      <div className="relative aspect-square overflow-hidden bg-fog">
-        <Image
-          src={product.image}
-          alt={product.alt}
-          width={400}
-          height={400}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <span className="absolute left-3 top-3 rounded-full bg-carbon/85 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-          {product.category}
-        </span>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-4 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-lg font-bold text-carbon">{product.name}</h3>
-          <p className="shrink-0 text-sm font-bold text-carbon">{product.price}</p>
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-silver bg-white transition-all duration-300 hover:-translate-y-1 hover:border-mist hover:shadow-xl hover:shadow-carbon/5">
+      <Link href={`/producto/${product.id}`} className="flex h-full flex-col">
+        <div className="relative aspect-square overflow-hidden bg-fog">
+          <Image
+            src={product.image}
+            alt={product.alt}
+            width={400}
+            height={400}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <span className="absolute left-3 top-3 rounded-full bg-carbon/85 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+            {product.category}
+          </span>
         </div>
-
-        <fieldset>
-          <legend className="mb-2 text-xs font-medium uppercase tracking-wide text-smoke">
-            Talle
-          </legend>
-          <div className="flex flex-wrap gap-2" role="group">
-            {SIZES.map((option) => (
-              <label key={option} className="cursor-pointer">
-                <input
-                  type="radio"
-                  name={`size-${product.id}`}
-                  value={option}
-                  checked={size === option}
-                  onChange={() => setSize(option)}
-                  className="peer sr-only"
-                />
-                <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-silver px-2 text-sm font-medium text-smoke transition-colors peer-checked:border-carbon peer-checked:bg-carbon peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-carbon">
-                  {option}
-                </span>
-              </label>
-            ))}
+        <div className="flex flex-1 flex-col gap-4 p-5">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-lg font-bold text-carbon">{product.name}</h3>
+            <p className="shrink-0 text-sm font-bold text-carbon">{priceFrom(product.price)}</p>
           </div>
-        </fieldset>
-
-        <button
-          type="button"
-          onClick={() => onQuote(product, size)}
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-carbon px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-carbon"
-        >
-          Cotizar por WhatsApp
-          <ArrowUpRight className="h-4 w-4" />
-        </button>
-      </div>
+          <span className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-carbon px-5 py-3 text-sm font-semibold text-white">
+            Ver artículo
+            <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </div>
+      </Link>
     </article>
   );
 }
 
 export function Products({ products }: { products: CatalogProduct[] }) {
   const [category, setCategory] = useState<string>("Todas");
-  const [draft, setDraft] = useState<{ product: CatalogProduct; size: string } | null>(
-    null
-  );
 
   const categories = [
     ...PRODUCT_CATEGORIES.filter(
@@ -124,8 +81,8 @@ export function Products({ products }: { products: CatalogProduct[] }) {
             Nuestras remeras
           </h2>
           <p className="mt-4 text-base leading-7 text-smoke">
-            Diseños infinitos que se subliman en cada prenda. Elegí talle,
-            dejá tu nombre y WhatsApp, y te cotizamos la cantidad.
+            Diseños infinitos que se subliman en cada prenda. Entrá a un
+            artículo para elegir talle, envío y cotizar.
           </p>
         </div>
 
@@ -155,10 +112,7 @@ export function Products({ products }: { products: CatalogProduct[] }) {
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {visibleProducts.map((product) => (
             <li key={product.id} className="h-full">
-              <ProductCard
-                product={product}
-                onQuote={(item, size) => setDraft({ product: item, size })}
-              />
+              <ProductCard product={product} />
             </li>
           ))}
         </ul>
@@ -185,14 +139,6 @@ export function Products({ products }: { products: CatalogProduct[] }) {
           </a>
         </div>
       </div>
-      {draft && (
-        <QuoteDialog
-          key={`${draft.product.id}-${draft.size}`}
-          product={draft.product}
-          size={draft.size}
-          onClose={() => setDraft(null)}
-        />
-      )}
     </section>
   );
 }

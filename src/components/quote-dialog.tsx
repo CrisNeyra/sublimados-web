@@ -4,7 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { MessageSquareShare } from "lucide-react";
 import { whatsappLink } from "@/lib/site";
 import { usePlaceOrder } from "@/lib/use-place-order";
-import type { CatalogProduct } from "@/components/products";
+import { priceFrom } from "@/lib/price";
+import { estimateShipping } from "@/lib/shipping";
+import type { CatalogProduct } from "@/lib/catalog";
+
+export type EmbroideryChoice = {
+  kind: string;
+  text: string;
+  place: string;
+};
 
 const fieldClass =
   "mt-1.5 w-full rounded-xl border border-silver bg-fog px-4 py-3 text-sm text-carbon placeholder:text-mist focus:border-carbon focus:outline-none focus:ring-2 focus:ring-carbon/20";
@@ -12,17 +20,26 @@ const fieldClass =
 export function QuoteDialog({
   product,
   size,
+  quantity: initialQuantity = "1",
+  postalCode: initialPostal = "",
+  embroidery,
   onClose,
 }: {
   product: CatalogProduct;
   size: string;
+  quantity?: string;
+  postalCode?: string;
+  embroidery?: EmbroideryChoice | null;
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [quantity, setQuantity] = useState("1");
+  const [quantity, setQuantity] = useState(initialQuantity);
+  const [postalCode, setPostalCode] = useState(initialPostal);
   const { isSending, error, submit } = usePlaceOrder();
+  const shipping = estimateShipping(postalCode);
+  const reference = priceFrom(product.price);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -30,8 +47,18 @@ export function QuoteDialog({
     dialog.showModal();
   }, []);
 
-  const quoteMessage = `¡Hola! Quiero cotizar ${quantity || "1"} remera${quantity === "1" ? "" : "s"} "${product.name}" (${product.price}), talle ${size}.
-Me llamo ${name.trim() || "—"}.`;
+  const quoteMessage = [
+    `¡Hola! Quiero cotizar ${quantity || "1"} ${product.category === "Bordados" ? "prenda" : "remera"}${quantity === "1" ? "" : "s"} "${product.name}".`,
+    `Precio de referencia: ${reference}. Se confirma al cotizar.`,
+    `Talle ${size}.`,
+    embroidery
+      ? `Bordado: ${embroidery.kind}${embroidery.text.trim() ? ` (${embroidery.text.trim()})` : ""}, ubicación ${embroidery.place}.`
+      : null,
+    shipping ? shipping.summary : null,
+    `Me llamo ${name.trim() || "—"}.`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,7 +70,9 @@ Me llamo ${name.trim() || "—"}.`;
         source: "CATALOGO",
         productName: product.name,
         size,
-        design: product.category,
+        design: embroidery
+          ? `${embroidery.kind} · ${embroidery.place}${embroidery.text.trim() ? ` · ${embroidery.text.trim()}` : ""}`
+          : product.category,
         notes: quoteMessage,
       },
       whatsappLink(quoteMessage)
@@ -66,8 +95,14 @@ Me llamo ${name.trim() || "—"}.`;
           {product.name}
         </h3>
         <p className="mt-2 text-sm text-smoke">
-          {product.price} · talle {size}. Dejanos tus datos y seguimos por WhatsApp.
+          {reference} · talle {size}. El precio es de referencia y se confirma por WhatsApp.
         </p>
+        {embroidery && (
+          <p className="mt-2 text-sm text-carbon">
+            {embroidery.kind}
+            {embroidery.text.trim() ? `: ${embroidery.text.trim()}` : ""} · {embroidery.place}
+          </p>
+        )}
 
         <label className="mt-5 block text-sm font-medium" htmlFor="quote-nombre">
           Tu nombre
@@ -111,6 +146,23 @@ Me llamo ${name.trim() || "—"}.`;
             required
           />
         </label>
+
+        <label className="mt-4 block text-sm font-medium" htmlFor="quote-cp">
+          Código postal
+          <input
+            id="quote-cp"
+            value={postalCode}
+            onChange={(event) => setPostalCode(event.target.value)}
+            inputMode="numeric"
+            placeholder="Ej: 1425"
+            className={fieldClass}
+          />
+        </label>
+        <p className="mt-1.5 text-xs text-smoke">
+          {shipping
+            ? shipping.summary
+            : "Envío estimado por correo. Con 4 dígitos vemos la zona."}
+        </p>
 
         {error && (
           <p className="mt-4 text-sm text-red-700" role="alert">

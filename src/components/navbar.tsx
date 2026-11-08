@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { NAV_LINKS, SITE } from "@/lib/site";
 import { BrandLogo } from "@/components/brand-logo";
 
-export function Navbar() {
+export function Navbar({ solid = false }: { solid?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -24,11 +24,13 @@ export function Navbar() {
     };
   }, [open]);
 
+  const onLight = solid || scrolled || open;
+
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled || open
+        onLight
           ? "bg-white/90 shadow-sm backdrop-blur-md"
           : "bg-carbon/70 backdrop-blur-md"
       )}
@@ -41,7 +43,7 @@ export function Navbar() {
           href="/#inicio"
           className={cn(
             "flex items-center gap-2 font-black tracking-tight",
-            scrolled || open ? "text-carbon" : "text-white"
+            onLight ? "text-carbon" : "text-white"
           )}
           onClick={() => setOpen(false)}
         >
@@ -56,7 +58,7 @@ export function Navbar() {
                 href={link.href}
                 className={cn(
                   "rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 xl:px-4 xl:text-base",
-                  scrolled || open
+                  onLight
                     ? "text-smoke hover:bg-fog hover:text-carbon focus-visible:outline-carbon"
                     : "text-white/90 hover:bg-white/10 hover:text-white focus-visible:outline-white"
                 )}
@@ -71,7 +73,7 @@ export function Navbar() {
           href="/#personalizador"
           className={cn(
             "hidden rounded-full px-5 py-2.5 text-base font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 lg:inline-flex",
-            scrolled || open
+            onLight
               ? "bg-carbon text-white hover:bg-graphite focus-visible:outline-carbon"
               : "bg-white text-carbon hover:bg-fog focus-visible:outline-white"
           )}
@@ -83,7 +85,7 @@ export function Navbar() {
           type="button"
           className={cn(
             "inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden",
-            scrolled || open
+            onLight
               ? "text-carbon hover:bg-fog focus-visible:outline-carbon"
               : "text-white hover:bg-white/10 focus-visible:outline-white"
           )}

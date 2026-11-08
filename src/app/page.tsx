@@ -2,7 +2,6 @@ import { Navbar } from "@/components/navbar";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { Customizer } from "@/components/customizer";
 import { Products } from "@/components/products";
-import type { CatalogProduct } from "@/components/products";
 import { About } from "@/components/about";
 import { Works } from "@/components/works";
 import type { CatalogReview } from "@/components/works";
@@ -11,53 +10,33 @@ import { Contact } from "@/components/contact";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { Footer } from "@/components/footer";
 import { getPrisma } from "@/lib/prisma";
-import {
-  catalogProductsFallback,
-  catalogReviewsFallback,
-} from "@/lib/catalog";
+import { loadCatalogProducts } from "@/lib/catalog-products";
+import { catalogReviewsFallback } from "@/lib/catalog";
 import { SITE } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  let products: CatalogProduct[] = [];
   let reviews: CatalogReview[] = [];
+  const products = await loadCatalogProducts();
 
   const prisma = getPrisma();
   try {
-    if (!prisma) {
-      throw new Error("Falta DATABASE_URL");
-    }
-    [products, reviews] = await Promise.all([
-      prisma.product.findMany({
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
-          name: true,
-          category: true,
-          price: true,
-          image: true,
-          alt: true,
-        },
-      }),
-      prisma.review.findMany({
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
-          name: true,
-          detail: true,
-          quote: true,
-          rating: true,
-        },
-      }),
-    ]);
+    if (!prisma) throw new Error("Falta DATABASE_URL");
+    reviews = await prisma.review.findMany({
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        name: true,
+        detail: true,
+        quote: true,
+        rating: true,
+      },
+    });
   } catch (error) {
-    console.error("No se pudieron cargar productos/reseñas desde Neon:", error);
+    console.error("No se pudieron cargar reseñas desde Neon:", error);
   }
 
-  if (products.length === 0) {
-    products = catalogProductsFallback();
-  }
   if (reviews.length === 0) {
     reviews = catalogReviewsFallback();
   }

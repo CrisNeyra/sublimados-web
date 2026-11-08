@@ -5,6 +5,7 @@ export const PRODUCT_CATEGORIES = [
   "Personajes",
   "Corporativos",
   "Eventos",
+  "Bordados",
 ] as const;
 
 export const SIZES = ["S", "M", "L", "XL", "XXL"] as const;
